@@ -1,7 +1,8 @@
 from sklearn.linear_model import LogisticRegression
 from interpret.glassbox import ExplainableBoostingClassifier
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
@@ -26,18 +27,17 @@ def run_simple_modeling(X, y, model) -> pd.DataFrame:
     log_reg = LogisticRegression(max_iter=100)
     log_reg_param_grid = {
         "C": [0.01, 1, 100],
-        "solver": ["lbfgs"],
+        "solver": ["saga", "lbfgs"],
     }
 
     ebm = ExplainableBoostingClassifier(
         interactions=5,
     )
     ebm_param_grid = {
-        # "max_leaves": [2, 3],
-        "smoothing_rounds": [0, 150],
+        "smoothing_rounds": [0, 100],
         "learning_rate": [0.005, 0.05],
         "interactions": [5, 20],
-        "interaction_smoothing_rounds": [0, 150],
+        "interaction_smoothing_rounds": [0, 100],
         "min_samples_leaf": [2, 8],
     }
 
@@ -47,13 +47,25 @@ def run_simple_modeling(X, y, model) -> pd.DataFrame:
         ("ebm", ebm, ebm_param_grid),
     ]:
         if name == "lr":
-            grid_search = RandomizedSearchCV(model, params, cv=skf, scoring="accuracy")
+            # LR needs scaling (in case it was not done)
+            scaler = StandardScaler()
+            for col in X.columns:
+                # if it's numerical, scale it
+                if X[col].dtype in ["int64", "float64"]:
+                    X[col] = scaler.fit_transform(X[[col]])
+            # tuning
+            grid_search = RandomizedSearchCV(
+                model,
+                params,
+                cv=skf,
+                scoring="accuracy",
+                n_iter=3
+            )
             grid_search.fit(X, y)
             best_model = grid_search.best_estimator_
         else:
+            # too expensive to tune, so we use default parameters
             best_model = ebm
-
-        # best_params = grid_search.best_params_
 
         # Validate the best model on each fold and average the scores
         accuracy_scores = []
