@@ -1,5 +1,5 @@
 import shap
-import shapiq
+# import shapiq
 import lime
 import pickle
 import pandas as pd
