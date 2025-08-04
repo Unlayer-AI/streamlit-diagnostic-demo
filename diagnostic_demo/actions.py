@@ -135,8 +135,13 @@ def display_calibration(
 
 def run_fairness() -> dict[str, any] | None:
 
-    # check that OPENAI_API_KEY and LLM_MODEL are set
-    if not os.getenv("OPENAI_API_KEY") or not os.getenv("LLM_MODEL"):
+    # check that LLM_API_KEY and LLM_MODEL are set
+    if (
+        not hasattr(st.session_state, "llm_api_key")
+        or not st.session_state.llm_api_key
+        or not hasattr(st.session_state, "llm_model")
+        or not st.session_state.llm_model
+    ):
         return None
 
     result = {
@@ -224,7 +229,7 @@ def display_fairness(fairness_col, fairness_tab, fairness_result):
             delta="No issue detected",
         )
         fairness_tab.write(
-            "⚠️ Fairness checks require the use of an LLM. Set the OpenAI API key and LLM model to run them."
+            "⚠️ Fairness checks require the use of an LLM. Set the LLM API key and LLM model to run them."
         )
         return
 

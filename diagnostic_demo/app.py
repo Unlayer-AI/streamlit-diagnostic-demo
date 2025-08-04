@@ -151,8 +151,8 @@ if uploaded_model or use_demo_model or hasattr(st.session_state, "model"):
             )
             with expander:
                 st.session_state.llm_option_expander = True
-                st.session_state.openai_api_key = st.text_input(
-                    "OpenAI API key",
+                st.session_state.llm_api_key = st.text_input(
+                    "LLM API key (e.g., OpenAI API key)",
                     placeholder="sk-...",
                 )
                 st.session_state.llm_model = st.text_input(
@@ -217,14 +217,6 @@ def run_diagnostic(
 
 
 if btn_diagnose:
-    # load API key and LLM in os if it was set
-    if not os.getenv("OPENAI_API_KEY") and hasattr(st.session_state, "openai_api_key"):
-        print("setting OPENAI_API_KEY from session state")
-        os.environ["OPENAI_API_KEY"] = st.session_state.openai_api_key
-    if not os.getenv("LLM_MODEL") and hasattr(st.session_state, "llm_model"):
-        print("setting LLM_MODEL from session state")
-        os.environ["LLM_MODEL"] = st.session_state.llm_model
-
     # check that the class is OK
     class_values = sorted(
         st.session_state.df[st.session_state.target_variable].unique()
