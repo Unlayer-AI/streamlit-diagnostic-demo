@@ -25,8 +25,8 @@ def run_simple_modeling(X, y, model) -> pd.DataFrame:
     # Logistic Regression
     log_reg = LogisticRegression(max_iter=100)
     log_reg_param_grid = {
-        "C": [0.01, 0.1, 1, 10, 100],
-        "solver": ["lbfgs", "liblinear"],
+        "C": [0.01, 1, 100],
+        "solver": ["lbfgs"],
     }
 
     ebm = ExplainableBoostingClassifier(
@@ -34,11 +34,11 @@ def run_simple_modeling(X, y, model) -> pd.DataFrame:
     )
     ebm_param_grid = {
         # "max_leaves": [2, 3],
-        "smoothing_rounds": [0, 75, 150],
-        "learning_rate": [0.005, 0.015, 0.05],
-        "interactions": [5, 10, 20],
-        "interaction_smoothing_rounds": [0, 75, 150],
-        "min_samples_leaf": [2, 4, 8],
+        "smoothing_rounds": [0, 150],
+        "learning_rate": [0.005, 0.05],
+        "interactions": [5, 20],
+        "interaction_smoothing_rounds": [0, 150],
+        "min_samples_leaf": [2, 8],
     }
 
     skf = StratifiedKFold(n_splits=3)

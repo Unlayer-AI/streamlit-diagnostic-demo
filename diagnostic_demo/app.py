@@ -185,11 +185,11 @@ def run_diagnostic(
     with st.spinner("Considering calibration..."):
         time.sleep(2)
         calibration_result = run_calibration()
-    with st.spinner("Running fairness checks..."):
+    with st.spinner("Running fairness checks (~a few seconds)..."):
         fairness_result = run_fairness()
-    with st.spinner("Estimating feature attribution (might take a few minutes)..."):
+    with st.spinner("Estimating feature attribution (~a dozen seconds)..."):
         attribution_result = run_attribution(subsample_no=ATTRIBUTION_SUBSAMPLE)
-    with st.spinner("Attempting simpler modeling (might take a few minutes)..."):
+    with st.spinner("Attempting simpler modeling (~a few minutes)..."):
         simpler_model_result = run_simpler_model()
 
     calib_col, fair_col, attr_col, surr_col = st.columns([1, 1, 1, 1])
