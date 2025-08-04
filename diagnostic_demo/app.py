@@ -60,9 +60,9 @@ use_demo_model = use_demo_model_btn_placeholder.button(
 )
 demo_text_holder.html("""<br>
 <p style="font-size: 14px; color: rgba(255, 255, 255, 0.6);">
-    A Python notebook to get a demo dataset and classifier is available 
-        <a target="_blank"
-        href="https://colab.research.google.com/drive/1x7xN5iMd3BHJOyxe64QfRYUN_-VtVuJs?usp=sharing">here</a>
+    A Python notebook to get a demo dataset and classifier is available
+        <a target="_blank" rel="noopener noreferrer"
+        href="https://colab.research.google.com/drive/1x7xN5iMd3BHJOyxe64QfRYUN_-VtVuJs?usp=sharing">here (Ctrl/Cmd+Click)</a>
 </p>
 """)
 
