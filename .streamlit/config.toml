@@ -1,0 +1,6 @@
+# https://docs.streamlit.io/develop/api-reference/configuration/config.toml
+
+[theme]
+base="dark"
+primaryColor="#25E5F7"
+textColor="#ffffff"
