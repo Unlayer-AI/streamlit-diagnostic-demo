@@ -211,8 +211,7 @@ def run_diagnostic(
             * Counterfactual explanations, integrated gradients, causality, symbolic regression...
             * ...or assessing generative models, tracing multi-agent systems?
         
-        We are here to help! Reach out to us at [Unlayer AI](https://unlayer.ai) or
-        [contact us](https://unlayer.ai/#contact) to discuss your needs and how
+        We are here to help! Reach out to us at [Unlayer AI](https://unlayer.ai/#contact) to discuss your needs and how
         we can assist you in building responsible AI systems."""
     )
 
