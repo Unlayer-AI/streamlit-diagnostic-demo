@@ -94,30 +94,36 @@ def run_shapiq(model, df, target_name, preds=None):
 def contrast_explainers(model, df, target_name, tol=0.1):
     # collect preds
     preds = model.predict(df.drop(columns=[target_name]))
+
     # run LIME
     print("running LIME")
     lime_expls = run_lime(model, df, target_name)
+
     # run Permutation
     # print("running PERM")
     # perm_expls = run_perm(model, df, target_name)
+
     # run SHAP
     print("running SHAP")
     shap_expls = run_shap(model, df, target_name, preds=preds)
-    
+
     # run SHAPIQ
-    print("running SHAPIQ")
-    shapiq_expls = run_shapiq(model, df, target_name, preds=preds)
+    # print("running SHAPIQ")
+    # shapiq_expls = run_shapiq(model, df, target_name, preds=preds)
 
     # add preds to df
     df["prediction"] = preds
 
     expl_diffs = []
     # for i, (shap_expl, lime_expl, perm_expl) in enumerate(zip(shap_expls, lime_expls, perm_expls)):
-    for i, (shap_expl, lime_expl, shapiq_expl) in enumerate(zip(shap_expls, lime_expls, shapiq_expls)):
+    # for i, (shap_expl, lime_expl, shapiq_expl) in enumerate(
+    #     zip(shap_expls, lime_expls, shapiq_expls)
+    # ):
+    for i, (shap_expl, lime_expl) in enumerate(zip(shap_expls, lime_expls)):
         diff = {"record": df.iloc[i]}
 
         for feature in lime_expl:
-            for other_expl in [lime_expl, shapiq_expl]:  # , perm_expl]:
+            for other_expl in [lime_expl]:  # , shapiq_expl]:  # , perm_expl]:
                 # consider important diffs...
                 if not (abs(shap_expl[feature] - other_expl[feature]) > tol):
                     continue
@@ -130,7 +136,7 @@ def contrast_explainers(model, df, target_name, tol=0.1):
                 diff[feature] = {
                     "lime": lime_expl[feature],
                     "shap": shap_expl[feature],
-                    "shapiq": shapiq_expl[feature],
+                    # "shapiq": shapiq_expl[feature],
                     # "perm": perm_expl[feature],
                 }
         # if diff has something more than the record
@@ -153,5 +159,5 @@ if __name__ == "__main__":
     df = df.iloc[subset_of_indices]
 
     # run_lime2(model, df, "income")
-    
+
     print(contrast_explainers(model, df, "income"))

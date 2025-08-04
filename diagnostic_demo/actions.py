@@ -134,7 +134,7 @@ def display_calibration(
 
 
 def run_fairness() -> dict[str, any] | None:
-    
+
     # check that OPENAI_API_KEY and LLM_MODEL are set
     if not os.getenv("OPENAI_API_KEY") or not os.getenv("LLM_MODEL"):
         return None
@@ -216,7 +216,7 @@ def run_fairness() -> dict[str, any] | None:
 
 
 def display_fairness(fairness_col, fairness_tab, fairness_result):
-    
+
     if fairness_result is None:
         fairness_col.metric(
             label="Fairness",
@@ -227,7 +227,7 @@ def display_fairness(fairness_col, fairness_tab, fairness_result):
             "⚠️ Fairness checks require the use of an LLM. Set the OpenAI API key and LLM model to run them."
         )
         return
-    
+
     # tot_cases = len(fairness_result["fair_columns"]) * fairness_result["num_metrics"]
     # if tot_cases == 0:
     #    tot_cases = 1
@@ -298,20 +298,20 @@ def run_attribution(subsample_no: int | None = None) -> dict[str, any]:
             for feature_name in features:
                 lime_expl = round(diff[feature_name]["lime"] * 100, 1)
                 shap_expl = round(diff[feature_name]["shap"] * 100, 1)
-                shapiq_expl = round(diff[feature_name]["shapiq"] * 100, 1)
+                # shapiq_expl = round(diff[feature_name]["shapiq"] * 100, 1)
                 # perm_expl = round(diff[feature_name]["perm"] * 100, 1)
 
                 # make lime and shap expl str
                 lime_expl = str(lime_expl)
                 shap_expl = str(shap_expl)
-                shapiq_expl = str(shapiq_expl)
+                # shapiq_expl = str(shapiq_expl)
                 # perm_expl = str(perm_expl)
                 if lime_expl[0] != "-":
                     lime_expl = "+" + lime_expl
                 if shap_expl[0] != "-":
                     shap_expl = "+" + shap_expl
-                if shapiq_expl[0] != "-":
-                    shapiq_expl = "+" + shapiq_expl
+                # if shapiq_expl[0] != "-":
+                #    shapiq_expl = "+" + shapiq_expl
                 # if perm_expl[0] != "-":
                 #    perm_expl = "+" + perm_expl
 
@@ -323,7 +323,7 @@ def run_attribution(subsample_no: int | None = None) -> dict[str, any]:
                 info["feature"].append(feature_name)
                 info["LIME attr. (%)"].append(lime_expl)
                 info["SHAP attr. (%)"].append(shap_expl)
-                info["SHAPIQ attr. (%)"].append(shapiq_expl)
+                # info["SHAPIQ attr. (%)"].append(shapiq_expl)
                 # info["Perm. attr. (%)"].append(perm_expl)
         info_df = pd.DataFrame(info).set_index("record idx")
         info_df.sort_values(by=["record idx", "feature"], inplace=True)
@@ -348,13 +348,19 @@ def display_attribution(
         ),
         delta=str(-delta) + "%" if delta > 0 else "No issue detected",
     )
-    
+
+    # attr_initial_txt = """\
+    # Comparison of feature attribution using \
+    # local linear approximation ([LIME](https://christophm.github.io/interpretable-ml-book/lime.html)), \
+    # Shapley value approximation ([SHAP](https://christophm.github.io/interpretable-ml-book/shap.html)), and \
+    # 2nd order Shapley interaction approximation ([SHAPIQ](https://github.com/InterpretML/shapley-importance-quantification)) \
+    # """
     attr_initial_txt = """\
     Comparison of feature attribution using \
-    local linear approximation ([LIME](https://christophm.github.io/interpretable-ml-book/lime.html)), \
-    Shapley value approximation ([SHAP](https://christophm.github.io/interpretable-ml-book/shap.html)), and \
-    2nd order Shapley interaction approximation ([SHAPIQ](https://github.com/InterpretML/shapley-importance-quantification)) \
+    local linear approximation ([LIME](https://christophm.github.io/interpretable-ml-book/lime.html)) and \
+    Shapley value approximation ([SHAP](https://christophm.github.io/interpretable-ml-book/shap.html)).
     """
+
     if subsample_no is not None:
         attr_initial_txt += f"on a sample of {subsample_no} records"
     attribution_tab.markdown(attr_initial_txt)
