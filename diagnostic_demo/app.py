@@ -246,7 +246,15 @@ footer = """<style>
 }
 </style>
 <div class="footer">
-<p style="text-align: center; font-size: 12px; color: rgba(255, 255, 255, 0.6); padding-top: 12px;">DISCLAIMER: This demo is for educational and informational purposes only. It does not constitute legal, ethical, or professional advice, and should not be relied upon for any decision-making. All outputs are provided “as is” without any warranty of accuracy, completeness, or fitness for a particular purpose. Use at your own risk.
+<p style="text-align: center; font-size: 12px; color: rgba(255, 255, 255, 0.6); padding-top: 12px;">
+DISCLAIMER: This demo is for educational and informational purposes only.
+It does not constitute legal, ethical, or professional advice, and should not be relied upon for any decision-making.
+All outputs are provided “as is” without any warranty of accuracy, completeness, or fitness for a particular use case.
+Any information (model, dataset, api keys, etc.) you insert is used for demonstrative purposes only.
+Do not upload sensitive, personal, or confidential information.
+The insertion of any information and the use of this software is at your own risk.
+You can check the open source repository <a href="https://github.com/unlayer-ai/streamlit-diagnostic-demo/" target="_blank">on github</a> to assess what the code does.
+<br>
 © 2025 Unlayer AI. All rights reserved.
 </p>
 </div>
