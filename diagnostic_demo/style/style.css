@@ -15,11 +15,37 @@ html, body, [class*="css"] {
     font-style: normal;
 }
 
-h1, h2, h3, h4 {
+h2, h3, h4 {
     font-family: "Inter", sans-serif !important;
     /*font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;*/
+}
+
+.logo {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    background-clip: text;
+    -webkit-background-clip: text;
+    /*-webkit-text-fill-color: transparent;*/
+    text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+    font-family: 'Alata', sans-serif !important;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #C60BF5 0%, #528BF6 50%, #25E5F7 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.pulse {
+    animation: pulse 3s infinite;
+}
+
+.text-white {
+    color: white !important;
 }
 
 /*.st-bd {

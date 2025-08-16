@@ -48,18 +48,37 @@ def display_calibration(
     calibration_result,
     threshold_bad_mean_miscalibration: float = 0.05,
 ):
+    explanation_container = calibration_tab.container(border=True)
+    explanation_container.markdown(
+        """\
+💡 *What is calibration?*
+
+The calibration of a model represents its ability to output scores \
+(between 0 and 1) that reflect the true probabilities of the outcomes.
+In other words, if a classifier is calibrated, we can reasonably interpret \
+its predicted scores as class probabilities.
+Note that a model can have high accuracy but low calibration!
+
+📚 Some resources:
+- [Wikipedia: Probabilistic classification](https://en.wikipedia.org/wiki/Probabilistic_classification)
+- [Scikit-learn: Probability calibration](https://scikit-learn.org/stable/modules/calibration.html)
+- [Wikipedia: Isotonic regression](https://en.wikipedia.org/wiki/Isotonic_regression)
+"""
+    )
+
     mean_misc = calibration_result["mean_misc"]
     max_misc = calibration_result["max_misc"]
     mean_misc_iso = calibration_result["mean_misc_iso"]
     max_misc_iso = calibration_result["max_misc_iso"]
 
+    delta = int(round(mean_misc * 100))
     calibration_col.metric(
         label="Calibration",
         value=(
-            "Failed" if mean_misc >= threshold_bad_mean_miscalibration else "Passed"
+            "To check" if mean_misc >= threshold_bad_mean_miscalibration else "Passed"
         ),
         delta=(
-            str(-round(mean_misc * 100)) + "%"
+            str(-delta) + "%"
             if mean_misc >= threshold_bad_mean_miscalibration
             else "No issue detected"
         ),
@@ -69,9 +88,7 @@ def display_calibration(
         """\
         Assessment of calibration \
         (simulated using 50% of the dev set), including \
-        the application of \
-        [isotonic regression](https://en.wikipedia.org/wiki/Isotonic_regression) \
-        to improve calibration"""
+        with an isotonic regression layer to improve calibration:"""
     )
     summary_df = pd.DataFrame(
         {
@@ -99,17 +116,17 @@ def display_calibration(
         and mean_misc_iso > threshold_bad_mean_miscalibration
     ):
         calibration_tab.write(
-            "⚠️ The model appears to be miscalibrated and \
-            adding isotonic regression might still be insufficient"
+            f"⚠️ The model appears to be miscalibrated ({delta}% mean miscalibration) and \
+            adding isotonic regression might still be insufficient."
         )
     elif mean_misc > threshold_bad_mean_miscalibration:
         calibration_tab.write(
-            "⚠️ The model appears to be miscalibrated, however \
-            fitting an isotonic model on top might help with calibration"
+            f"⚠️ The model appears to be miscalibrated ({delta}% mean miscalibration), however \
+            fitting an isotonic model on top might help with calibration."
         )
     else:
         calibration_tab.write(
-            "The model appears to be calibrated (mean miscalibration < 5%)"
+            "✅ The model appears to be decently calibrated (mean miscalibration < 5%)."
         )
 
     fig, ax = plt.subplots()
@@ -130,7 +147,9 @@ def display_calibration(
     ax.set_xlabel("predicted probability")
     ax.set_ylabel("true probability")
     ax.legend()
-    calibration_tab.pyplot(fig)
+
+    calib_plot_container = calibration_tab.container(border=True)
+    calib_plot_container.pyplot(fig)
 
 
 def run_fairness() -> dict[str, any] | None:
@@ -222,6 +241,21 @@ def run_fairness() -> dict[str, any] | None:
 
 def display_fairness(fairness_col, fairness_tab, fairness_result):
 
+    explanation_container = fairness_tab.container(border=True)
+    explanation_container.markdown(
+        """\
+💡 *What is fairness?*
+
+Fairness concerns the model's ability to make unbiased and equitable predictions across different groups of individuals.
+This means that the model should not favor one group over another, and its performance should be consistent across all demographic groups.
+Fairness is particularly important in sensitive applications, such as hiring, lending, and healthcare, where biased predictions can have serious consequences.
+
+📚 Some resources:
+- [Wikipedia: Fairness (Machine Learning)](https://en.wikipedia.org/wiki/Fairness_(machine_learning))
+- [Barocas, Hardt, Narayan 2023: Fairness and Machine Learning: Limitations and Opportunities](https://fairmlbook.org/)
+"""
+    )
+
     if fairness_result is None:
         fairness_col.metric(
             label="Fairness",
@@ -243,7 +277,7 @@ def display_fairness(fairness_col, fairness_tab, fairness_result):
 
     fairness_col.metric(
         label="Fairness",
-        value=("Failed" if fairness_result["num_cases"] > 0 else "Passed"),
+        value=("To check" if fairness_result["num_cases"] > 0 else "Passed"),
         delta=(str(-delta) + "%" if delta > 0 else "No issue detected"),
     )
 
@@ -253,21 +287,22 @@ def display_fairness(fairness_col, fairness_tab, fairness_result):
         # )
         # fairness_tab.write(fairness_result["fair_columns"])
         fairness_tab.write(
-            "Groups that could be discriminated, together with salient statistics"
+            "🔍 Identified features representing groups that could be \
+                discriminated (and salient statistics):"
         )
         fairness_tab.write(fairness_result["group_stats"])
 
         if fairness_result["num_cases"] > 0:
             fairness_tab.write(
-                "⚠️ Disparities found between the whole population (baseline) \
-                and the following groups"
+                f"⚠️ Disparities found between the whole population (baseline) \
+                and the following groups ({delta}% of the groups):"
             )
             # fairness_tab.markdown(fairness_result["outcome_md"])
             fairness_tab.write(fairness_result["outcome_df"].set_index("metric"))
         else:
-            fairness_tab.write("However no substantial disparities detected")
+            fairness_tab.write("No substantial disparities detected.")
     else:
-        fairness_tab.write("No features to discriminate groups detected")
+        fairness_tab.write("No features to discriminate groups detected.")
 
 
 def run_attribution(subsample_no: int | None = None) -> dict[str, any]:
@@ -343,6 +378,25 @@ def display_attribution(
     attribution_result,
     subsample_no: int | None = None,
 ):
+
+    explanation_container = attribution_tab.container(border=True)
+    explanation_container.markdown(
+        """\
+💡 *What is feature attribution?*
+
+Feature attribution means quantifying the contribution of each feature (or feature interaction) to the model's predictions.
+It can be used to explain, to some extent, the model's behavior and decision-making process.
+Multiple feature attribution algorithms exist, each typically making some assumptions and approximations.
+Unless there is a clear understanding of these aspects,
+trusting feature attribution explanations without scrutiny can be misleading.
+
+📚 Some resources:
+- [Molnar 2025: Intepretable Machine Learning - LIME](https://christophm.github.io/interpretable-ml-book/lime.html)
+- [Molnar 2025: Intepretable Machine Learning - SHAP](https://christophm.github.io/interpretable-ml-book/shap.html)
+- [SHAP-IQ Docs: What Are Shapley Interactions, and Why Should You Care?](https://shapiq.readthedocs.io/en/latest/introduction/index.html)
+"""
+    )
+
     num = len(attribution_result["outcome_df"].index.unique())
     denom = len(st.session_state.df) if subsample_no is None else subsample_no
     delta = int(round(num / denom * 100))
@@ -363,20 +417,23 @@ def display_attribution(
     attr_initial_txt = """\
     Comparison of feature attribution using \
     local linear approximation ([LIME](https://christophm.github.io/interpretable-ml-book/lime.html)) and \
-    Shapley value approximation ([SHAP](https://christophm.github.io/interpretable-ml-book/shap.html)).
-    """
+    Shapley value approximation ([SHAP](https://christophm.github.io/interpretable-ml-book/shap.html))\
+"""
 
     if subsample_no is not None:
-        attr_initial_txt += f"on a sample of {subsample_no} records"
+        attr_initial_txt += f" on a sample of {subsample_no} records."
+    else:
+        attr_initial_txt += "."
     attribution_tab.markdown(attr_initial_txt)
 
     if len(attribution_result["attribution_diffs"]) > 0:
-        msg = "⚠️ Inconsistencies found among feature attribution methods"
+        msg = f"⚠️ Relevant inconsistencies found among feature attribution \
+            methods in {delta}% of the analyzed records:"
         attribution_tab.write(msg)
         attribution_tab.write(attribution_result["outcome_df"])
     else:
         attribution_tab.write(
-            "No substantial inconsistencies found among feature attribution methods"
+            "✅ No substantial inconsistencies found among feature attribution methods."
         )
 
 
@@ -415,24 +472,50 @@ def run_simpler_model() -> dict[str, any]:
     result["simpler_model_feasible"] = any(comparison_list)
     result["num_matched_metrics"] = sum(comparison_list)
 
+    percent_prob = int(
+        round(result["num_matched_metrics"] / len(result["comparison_list"]) * 100)
+    )
+
     if result["simpler_model_feasible"]:
         result["msg"] = (
-            "⚠️ A simple model ([logistic regression](https://interpret.ml/docs/lr.html) or \
+            f"⚠️ A simple model ([logistic regression](https://interpret.ml/docs/lr.html) or \
             [explainable boosting machine](https://interpret.ml/docs/ebm.html), estimation using 3-fold cross-val on dev. set) performs \
-            comparably to the original in some metrics, \
-            raising concerns about the justification for the original choice."
+            comparably to the original model in {percent_prob}% of the tested metrics:"
         )
     else:
         result["msg"] = (
-            "A simple model ([logistic regression](https://interpret.ml/docs/lr.html) or\
-            [explainable boosting machine](https://interpret.ml/docs/ebm.html), estimation using 3-fold cross-val on dev. set) seems unable to match the original model, \
-            which justifies using the original model"
+            "✅ A simple model ([logistic regression](https://interpret.ml/docs/lr.html) or\
+            [explainable boosting machine](https://interpret.ml/docs/ebm.html), estimation using 3-fold cross-val on dev. set) seems \
+            unable to match the performance of the original model."
         )
 
     return result
 
 
 def display_simpler_model(simpler_model_col, simpler_model_tab, simpler_model_result):
+
+    explanation_container = simpler_model_tab.container(border=True)
+    explanation_container.markdown(
+        """\
+💡 *Why attempting to use simpler models?*
+
+Certain black-box model classes (e.g. for tabular data `xgboost`, `catboost`, `lightgbm`)
+perform very well in many different scenarios: making them a popular choice. 
+
+However, there are cases where simpler and inherently-interpretable models \
+(e.g., `linear/logistic regression`, `single tree`, `symbolic regression`) can \
+perform also well.
+Certain regulatory guidelines require a justification
+for the rationale behind model choice: it is therefore important to test \
+whether the use of a complex and opaque model over a simpler one is warranted.
+
+📚 Some resources:
+- [Rudin 2019: Stop explaining black box models for high stakes decisions and use intepretable models instead](https://doi.org/10.1038/s42256-019-0048-x)
+- [Christodoulou et al. 2019: A systematic review shows no performance benefit of machine learning over logistic regression for clinical prediction models](https://doi.org/10.1016/j.jclinepi.2019.02.004)
+- [European Union 2024: The EU AI Act](https://www.europarl.europa.eu/topics/en/article/20230601STO93804/eu-ai-act-first-regulation-on-artificial-intelligence)
+"""
+    )
+
     delta = simpler_model_result["num_matched_metrics"] / len(
         simpler_model_result["comparison_list"]
     )

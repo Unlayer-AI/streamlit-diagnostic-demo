@@ -1,3 +1,6 @@
+
+
+
 import streamlit as st
 
 # from streamlit_card import card as st_card
@@ -33,50 +36,70 @@ css = """
 """
 
 st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
-st.markdown("### Unlayer AI - diagnostic demo")
+st.markdown("""
+<h1 class="logo pulse">
+    <span class="gradient-text">Unlayer</span> <span class="text-white">AI</span>
+    <span class="text-white" style="font-size: 2rem;">- diagnostic demo</span>
+</h1> 
+""", unsafe_allow_html=True)
 
-btn_diagnose = None
+init_description = st.caption("""This demo runs explainable AI checks on a binary classification model and dataset,
+expecting a label with values `1` for positive class and `0` for negative class.
+
+You are free to upload a sklearn-compatible binary classifier and development dataset of your choice,
+or use a pre-loaded demo model and dataset.
+The demo model and dataset are taken from
+<a target="_blank"
+    href="https://colab.research.google.com/drive/1x7xN5iMd3BHJOyxe64QfRYUN_-VtVuJs?usp=sharing">
+    this colab</a>,
+which you can browse to understand how a compatible model and dataset should be structured.
+""", unsafe_allow_html=True)
+
 model_uploader = st.empty()
 data_uploader = st.empty()
+df_header_placeholder = st.empty()
 df_placeholder = st.empty()
 var_to_predict_placeholder = st.empty()
 target_class_placeholder = st.empty()
 llm_option_expander = st.empty()
 
-col1, col2 = st.columns([4, 2])
+col1, col2 = st.columns([3, 2])
 
 with col2:
-    use_demo_model_btn_placeholder = st.empty()
-    use_demo_data_btn_placeholder = st.empty()
+    use_demo_model_n_data_placeholder = st.empty()
+    btn_diagnose = None
     btn_diagnose_placeholder = st.empty()
 
-demo_text_holder = st.empty()
-
 uploaded_model = model_uploader.file_uploader(
-    "1️⃣ Upload a scikit-learn compatible binary classifier", type=["pkl"]
+    "1️⃣ Upload a trained scikit-learn compatible binary classifier", type=["pkl"]
 )
-use_demo_model = use_demo_model_btn_placeholder.button(
-    "or use demo classifier", use_container_width=True
-)
-demo_text_holder.html(
-    """<br>
-<p style="font-size: 14px; color: rgba(255, 255, 255, 0.6);">
-    A Python notebook to get a demo dataset and classifier is available
-        <a target="_blank" rel="noopener noreferrer"
-        href="https://colab.research.google.com/drive/1x7xN5iMd3BHJOyxe64QfRYUN_-VtVuJs?usp=sharing">here (Ctrl/Cmd+Click)</a>
-</p>
-"""
+uploaded_data = data_uploader.file_uploader(
+    "2️⃣ Upload a compatible binary classification development set", type=["csv"]
 )
 
-if uploaded_model or use_demo_model or hasattr(st.session_state, "model"):
-    if hasattr(st.session_state, "model"):
-        uploaded_model = st.session_state.model
+use_demo_model_n_data = use_demo_model_n_data_placeholder.button(
+    "or use a demo model & dataset", use_container_width=True
+)
 
-    if not hasattr(st.session_state, "model"):
-        if use_demo_model:
-            uploaded_model = open("demo_data/model.pkl", "rb")
 
-        uploaded_model = pickle.load(uploaded_model)
+if (
+    (uploaded_model and uploaded_data)
+    or (hasattr(st.session_state, "model") and hasattr(st.session_state, "df"))
+    or use_demo_model_n_data
+):
+    if use_demo_model_n_data:
+        with open("demo_data/model.pkl", "rb") as model:
+            uploaded_model = pickle.load(model)
+        uploaded_data = pd.read_csv("demo_data/dev.csv")
+    else:
+        if hasattr(st.session_state, "model"):
+            uploaded_model = st.session_state.model
+        if not hasattr(st.session_state, "model"):
+            uploaded_model = pickle.load(uploaded_model)
+        if hasattr(st.session_state, "df"):
+            uploaded_data = st.session_state.df
+        else:
+            uploaded_data = pd.read_csv(uploaded_data)
 
     # check the model is OK
     if not hasattr(uploaded_model, "predict"):
@@ -93,88 +116,71 @@ if uploaded_model or use_demo_model or hasattr(st.session_state, "model"):
         )
         uploaded_model = None
 
-    else:
-        st.toast("Classifier loaded", icon="🤖")
-        # hide model uploader control
-        st.session_state.model = uploaded_model
-        model_uploader.empty()
-        use_demo_model_btn_placeholder.empty()
+    # store in session state
+    st.session_state.model = uploaded_model
+    st.session_state.df = uploaded_data
 
-        # Move to next step: data upload
-        uploaded_data = data_uploader.file_uploader(
-            "2️⃣ Upload a binary classification development set", type=["csv"]
+    # hide controls
+    init_description.empty()
+    model_uploader.empty()
+    data_uploader.empty()
+    use_demo_model_n_data_placeholder.empty()
+
+    # show
+    df_header_placeholder.caption(f"""
+            You uploaded a *<span class="text-white">{st.session_state.model.__class__.__name__}</span>*
+            to be evaluated on this dataset (first 5 rows preview):
+    """, unsafe_allow_html=True)
+    df_placeholder.write(st.session_state.df.head(5))
+
+    def set_desirable_class():
+        values = sorted(st.session_state.df[st.session_state.target_variable].unique())
+        st.session_state.target_class = int(values[-1])
+        print(
+            f"desirable class for {st.session_state.target_variable} is {st.session_state.target_class}"
         )
-        use_demo_data = use_demo_data_btn_placeholder.button(
-            "or use demo dataset", use_container_width=True
+
+    # get the variable to predict
+    st.session_state.target_variable = str(
+        st.session_state.df.columns[len(st.session_state.df.columns) - 1]
+    )
+    set_desirable_class()
+    st.session_state.target_variable = var_to_predict_placeholder.selectbox(
+        "3️⃣ Select the variable to predict (binary class expected, with 1=desirable, 0=undesirable):",
+        st.session_state.df.columns,
+        index=len(st.session_state.df.columns) - 1,
+        on_change=set_desirable_class,
+    )
+
+    expander = llm_option_expander.expander(
+        "4️⃣ Set up an LLM for advanced diagnostics",
+        expanded=st.session_state.get("llm_option_expander", False),
+    )
+    with expander:
+        st.session_state.llm_option_expander = True
+        st.session_state.llm_api_key = st.text_input(
+            "LLM API key (e.g., OpenAI API key)",
+            placeholder="sk-...",
+        )
+        st.session_state.llm_model = st.text_input(
+            "LLM model name",
+            placeholder="gpt-4o",
         )
 
-        if uploaded_data or use_demo_data or hasattr(st.session_state, "df"):
-            if use_demo_data:
-                uploaded_data = "demo_data/dev.csv"
-
-            # open dataset and extract columns
-            if not hasattr(st.session_state, "df"):
-                st.session_state.df = pd.read_csv(uploaded_data)
-            else:
-                uploaded_data = st.session_state.df
-
-            st.toast("Development set loaded", icon="🗂️")
-            data_uploader.empty()
-            use_demo_data_btn_placeholder.empty()
-            demo_text_holder.empty()
-
-            # show
-            df_placeholder.write(st.session_state.df.head(5))
-
-            def set_desirable_class():
-                values = sorted(
-                    st.session_state.df[st.session_state.target_variable].unique()
-                )
-                st.session_state.target_class = int(values[-1])
-                print(
-                    f"desirable class for {st.session_state.target_variable} is {st.session_state.target_class}"
-                )
-
-            # get the variable to predict
-            st.session_state.target_variable = str(
-                st.session_state.df.columns[len(st.session_state.df.columns) - 1]
-            )
-            set_desirable_class()
-            st.session_state.target_variable = var_to_predict_placeholder.selectbox(
-                "What is the variable to predict? (binary class expected, with 1=desirable, 0=undesirable)",
-                st.session_state.df.columns,
-                index=len(st.session_state.df.columns) - 1,
-                on_change=set_desirable_class,
-            )
-
-            expander = llm_option_expander.expander(
-                "Use LLM for advanced diagnostics",
-                expanded=st.session_state.get("llm_option_expander", False),
-            )
-            with expander:
-                st.session_state.llm_option_expander = True
-                st.session_state.llm_api_key = st.text_input(
-                    "LLM API key (e.g., OpenAI API key)",
-                    placeholder="sk-...",
-                )
-                st.session_state.llm_model = st.text_input(
-                    "LLM model name",
-                    placeholder="gpt-4o",
-                )
-
-            with col2:
-                btn_diagnose = btn_diagnose_placeholder.button("🩺 Diagnose")
+    with col2:
+        btn_diagnose = btn_diagnose_placeholder.button("🩺 Diagnose")
 
 
 # if model is uploaded and btn "diagnose" is clicked
 def run_diagnostic(
-    data_uploader, df_placeholder, var_to_predict_placeholder, btn_diagnose_placeholder
+    data_uploader, df_header_placeholder, df_placeholder, var_to_predict_placeholder, btn_diagnose_placeholder
 ):
     st.toast("Diagnosis started", icon="🩺")
     # if not st.session_state.df or not st.session_state.model:
     #    st.error("Please upload a dataset and a model")
     #    st.stop()
     data_uploader.empty()
+    df_header_placeholder.empty()
     df_placeholder.empty()
     var_to_predict_placeholder.empty()
     llm_option_expander.empty()
@@ -230,6 +236,7 @@ if btn_diagnose:
     else:
         run_diagnostic(
             data_uploader,
+            df_header_placeholder,
             df_placeholder,
             var_to_predict_placeholder,
             btn_diagnose_placeholder,
@@ -265,3 +272,4 @@ footer = """<style>
 </div>
 """
 st.markdown(footer, unsafe_allow_html=True)
+
