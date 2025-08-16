@@ -1,0 +1,15 @@
+[project]
+name = "Unlayer_AI-streamlit-diagnostic-demo"
+version = "0.1.0"
+description = "A demo of explainable AI diagnostics that can be run on a traditional binary classification case"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "interpret==0.6.9",
+    "lime==0.2.0.1",
+    "litellm==1.74.15.post1",
+    "overrides==7.7.0",
+    "scikit-learn==1.4.0",
+    "seaborn==0.13.2",
+    "streamlit==1.41.1",
+]
