@@ -274,8 +274,7 @@ the API key, please let us know at [hi@unlayer.ai](mailto:hi@unlayer.ai).
             simpler_model_result = run_simpler_model()
             
         # clear API key for additional security
-        if "llm_api_key" in st.session_state:
-            del st.session_state["llm_api_key"]
+        st.session_state.pop("llm_api_key", None)
 
         calib_col, fair_col, attr_col, surr_col = st.columns([1, 1, 1, 1])
         calib_tab, fair_tab, attr_tab, surr_tab, contact_tab = st.tabs(
@@ -298,22 +297,22 @@ the API key, please let us know at [hi@unlayer.ai](mailto:hi@unlayer.ai).
     - 🔍 Enhance transparency with interpretable models and feature attribution
     - ⚖️ Increase fairness through bias detection and mitigation strategies
 
-    ### Actionability & Reliability
-    - 🔄 Provide recourse via counterfactual explanations that suggest actionable alternatives 
-    - ⚙️ Improve robustness using adversarial training methods
-
-    ### Causality & Privacy
-    - 🧩 Estimate cause–effect relationships with causal inference and propensity scoring  
+    #### Actionability & Privacy
+    - 🔄 Empower your users with recourse via counterfactual explanations
     - 🔒 Increase privacy with synthetic data generation
-
-    ### Compliance & Research
+    
+    #### Robustness & Causality
+    - 🧩 Estimate cause–effect relationships with causal inference and propensity scoring  
+    - ⚙️ Improve robustness using adversarial training methods
+    
+    #### Compliance & Research
     - 📑 Answer regulatory questions with clear documentation and compliance checks
     - ✍️ Support research with expert guidance and collaboration
 
     [Get in touch](https://unlayer.ai/#contact) to explore how we can help \
     you turn responsible AI principles into systems that are transparent, reliable, and trusted.
     """
-        )
+)
 
     if btn_diagnose:
         # check that the class is OK
