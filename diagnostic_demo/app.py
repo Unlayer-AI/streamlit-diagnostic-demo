@@ -224,7 +224,8 @@ def run_app():
             st.caption("""\
 ⚠️ Use a budget-limited API to prevent excessive costs from unforeseen usage \
 or cybertheft. The app uses `st.session_state` to store the API key during the \
-analysis and then deletes it afterwards.
+analysis and then deletes it afterwards. If you have better ideas for securing \
+the API key, please let us know at [hi@unlayer.ai](mailto:hi@unlayer.ai).
 """)
             st.session_state.llm_option_expander = True
             st.session_state.llm_api_key = st.text_input(
