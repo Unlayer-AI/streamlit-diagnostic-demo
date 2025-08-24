@@ -69,8 +69,7 @@ The application includes sample data in the `demo_data/` folder:
 1. **Upload Data**: Provide a CSV file with your dataset
 2. **Upload Model**: Provide a pickled scikit-learn compatible model
 3. **Select Target Variable**: Choose the column your model predicts
-4. **Configure LLM** (optional): Add OpenAI API key for fairness analysis
-5. **Run Diagnostics**: Click "Diagnose!" to execute all checks`
+4. **Run Diagnostics**: Click "Diagnose!" to execute all checks
 
 ## 📞 Contact
 
