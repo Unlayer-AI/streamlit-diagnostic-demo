@@ -216,28 +216,6 @@ def run_app():
             on_change=set_desirable_class,
         )
 
-        expander = llm_option_expander.expander(
-            "4️⃣ Set up an LLM for advanced diagnostics",
-            expanded=st.session_state.get("llm_option_expander", False),
-        )
-        with expander:
-            st.caption("""\
-⚠️ Use a budget-limited API to prevent excessive costs from unforeseen usage \
-or cybertheft. The app uses `st.session_state` to store the API key during the \
-analysis and then deletes it afterwards. If you have better ideas for securing \
-the API key, please let us know at [hi@unlayer.ai](mailto:hi@unlayer.ai).
-""")
-            st.session_state.llm_option_expander = True
-            st.session_state.llm_api_key = st.text_input(
-                "LLM API key (e.g., OpenAI API key)",
-                placeholder="sk-...",
-                type="password",
-            )
-            st.session_state.llm_model = st.text_input(
-                "LLM model name",
-                placeholder="gpt-4o",
-            )
-
         with col2:
             btn_diagnose = btn_diagnose_placeholder.button("🩺 Diagnose")
 
@@ -273,9 +251,6 @@ the API key, please let us know at [hi@unlayer.ai](mailto:hi@unlayer.ai).
         with st.spinner("Attempting simpler modeling (~a few minutes)..."):
             simpler_model_result = run_simpler_model()
             
-        # clear API key for additional security
-        st.session_state.pop("llm_api_key", None)
-
         calib_col, fair_col, attr_col, surr_col = st.columns([1, 1, 1, 1])
         calib_tab, fair_tab, attr_tab, surr_tab, contact_tab = st.tabs(
             ["Calibration", "Fairness", "Attribution", "Simpler modeling", "Contact us"]

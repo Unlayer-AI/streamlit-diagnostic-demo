@@ -75,7 +75,7 @@ Note that a model can have high accuracy but low calibration!
     calibration_col.metric(
         label="Calibration",
         value=(
-            "To check" if mean_misc >= threshold_bad_mean_miscalibration else "Passed"
+            "To Check" if mean_misc >= threshold_bad_mean_miscalibration else "Passed"
         ),
         delta=(
             str(-delta) + "%"
@@ -156,10 +156,10 @@ def run_fairness() -> dict[str, any] | None:
 
     # check that LLM_API_KEY and LLM_MODEL are set
     if (
-        not hasattr(st.session_state, "llm_api_key")
-        or not st.session_state.llm_api_key
-        or not hasattr(st.session_state, "llm_model")
-        or not st.session_state.llm_model
+        "LLM_API_KEY" not in os.environ
+        or not os.environ["LLM_API_KEY"]
+        or "LLM_MODEL" not in os.environ
+        or not os.environ["LLM_MODEL"]
     ):
         return None
 
@@ -263,7 +263,7 @@ Fairness is particularly important in sensitive applications, such as hiring, le
             delta="No issue detected",
         )
         fairness_tab.write(
-            "⚠️ Fairness checks require the use of an LLM. Set the LLM API key and LLM model to run them."
+            "⚠️ Fairness checks require the use of an LLM. An LLM API key and/or LLM model could not be found in the environment variables."
         )
         return
 
@@ -277,7 +277,7 @@ Fairness is particularly important in sensitive applications, such as hiring, le
 
     fairness_col.metric(
         label="Fairness",
-        value=("To check" if fairness_result["num_cases"] > 0 else "Passed"),
+        value=("To Check" if fairness_result["num_cases"] > 0 else "Passed"),
         delta=(str(-delta) + "%" if delta > 0 else "No issue detected"),
     )
 
@@ -403,7 +403,7 @@ trusting feature attribution explanations without scrutiny can be misleading.
     attribution_col.metric(
         label="Attribution",
         value=(
-            "Failed" if len(attribution_result["attribution_diffs"]) > 0 else "Passed"
+            "To Check" if len(attribution_result["attribution_diffs"]) > 0 else "Passed"
         ),
         delta=str(-delta) + "%" if delta > 0 else "No issue detected",
     )
@@ -523,7 +523,7 @@ whether the use of a complex and opaque model over a simpler one is warranted.
     simpler_model_col.metric(
         label="Simpler modeling",
         value=(
-            "Failed" if simpler_model_result["simpler_model_feasible"] else "Passed"
+            "To Check" if simpler_model_result["simpler_model_feasible"] else "Passed"
         ),
         delta=str(-delta) + "%" if delta > 0 else "No issue detected",
     )

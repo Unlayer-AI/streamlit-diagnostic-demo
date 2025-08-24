@@ -39,13 +39,20 @@ cd streamlit-diagnostic-demo
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+3. Set environment variables (optional):
+
+```bash
+export LLM_API_KEY="your_api_key"
+export LLM_MODEL="your_model_name"
+```
+
+4. Run the application:
 
 ```bash
 streamlit run diagnostic_demo/app.py
 ```
 
-1. Open your browser at the indicated localhost URL (e.g. `http://localhost:8501`).
+5. Open your browser at the indicated localhost URL (e.g. `http://localhost:8501`).
 
 ### Using Demo Data
 

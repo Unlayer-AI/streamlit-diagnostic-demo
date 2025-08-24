@@ -1,7 +1,7 @@
+import os
 import litellm
 from dotenv import load_dotenv
 import pandas as pd
-import streamlit as st
 
 load_dotenv()
 
@@ -16,8 +16,8 @@ def extract_fairness_columns(
     llm_model: str | None = None,
 ) -> list[str]:
 
-    litellm.api_key = st.session_state.get("llm_api_key", None)
-
+    litellm.api_key = os.environ.get("LLM_API_KEY", None)
+    
     df_str = ""
     for col in df.columns:
         df_str += f"{col}, "
@@ -58,7 +58,7 @@ Do not put comments or anything else in the list, since the feature names need t
 
     # openai call
     if llm_model is None:
-        llm_model = st.session_state.get("llm_model", "gpt-4o")
+        llm_model = os.environ.get("LLM_MODEL", "gpt-4o")
     response = litellm.completion(model=llm_model, messages=msgs)
 
     # extract msg and columns
@@ -111,7 +111,7 @@ Is there significant variability? Is the model fair to different groups?
     ]
 
     # LLM call
-    litellm.api_key = st.session_state.get("llm_api_key", None)
+    litellm.api_key = os.environ.get("LLM_API_KEY", None)
     response = litellm.completion(model=llm_model, messages=msgs)
 
     return response.choices[0].message.content
