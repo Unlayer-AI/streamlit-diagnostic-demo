@@ -62,6 +62,15 @@ The application includes sample data in the `demo_data/` folder:
 - `model.pkl`: Pre-trained model
 - `train.csv` & `dev.csv`: Training and development sets
 
+## 📚 Dataset Attribution & License
+
+This demo uses a prepared subset derived from U.S. Census Bureau public‑use microdata commonly known as the “Adult (Census Income)” dataset.
+
+- Source: U.S. Census Bureau, public‑use microdata (public domain).
+- License/Use: Works of the U.S. federal government are in the public domain. Commercial use is allowed. Attribution is not legally required; provided here as a courtesy. No endorsement by the U.S. Census Bureau is implied.
+- Courtesy attribution: "Contains data derived from U.S. Census Bureau public‑use microdata (often referenced as the ‘Adult/Census Income’ dataset). Public domain. Modifications by Unlayer AI. No endorsement implied."
+- Links: Census data portal: https://www.census.gov/data.html · Census open data terms: https://www.census.gov/data/developers/about/terms-of-service.html
+
 ## 📋 Usage
 
 ### Basic Workflow
