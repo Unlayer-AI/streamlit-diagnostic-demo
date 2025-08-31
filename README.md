@@ -71,28 +71,19 @@ This demo uses a prepared subset derived from U.S. Census Bureau public‑use mi
 - Courtesy attribution: "Contains data derived from U.S. Census Bureau public‑use microdata (often referenced as the ‘Adult/Census Income’ dataset). Public domain. Modifications by Unlayer AI. No endorsement implied."
 - Links: Census data portal: https://www.census.gov/data.html · Census open data terms: https://www.census.gov/data/developers/about/terms-of-service.html
 
-## 📋 Usage
-
-### Basic Workflow
-
-1. **Upload Data**: Provide a CSV file with your dataset
-2. **Upload Model**: Provide a pickled scikit-learn compatible model
-3. **Select Target Variable**: Choose the column your model predicts
-4. **Run Diagnostics**: Click "Diagnose!" to execute all checks
-
 ## 📞 Contact
 
 Want to learn more about responsible AI or integrate these diagnostics into your workflow?
 
 **Unlayer AI** - Building transparent and trustworthy AI systems
 
-- Learn about counterfactual explanations, integrated gradients, causality, and symbolic regression
-- Explore enterprise solutions for responsible AI
+- Learn about responsible AI practices
 - Get expert guidance on AI ethics and compliance
+- Explore tailored solutions for your organization's AI needs
 - Visit [https://unlayer.ai](https://unlayer.ai) for more information
 
 ## 📄 License
 
-This project is licensed under MIT License with Attribution - see the [LICENSE](LICENSE) file for details.
+This project is licensed under MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
