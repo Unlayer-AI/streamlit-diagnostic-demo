@@ -65,11 +65,14 @@ if (
     with disclaimer_container:
         st.markdown(
             """\
-### DISCLAIMER
+### DISCLAIMER & PRIVACY
 This demo is provided <strong>for educational and informational purposes only</strong>. It is not intended as legal, ethical, or professional advice and should <strong>not be relied upon</strong> for making decisions of any kind, including those related to fairness, compliance, or deployment of machine learning models.
 All outputs, analyses, and recommendations are provided <strong>"as is"</strong> with <strong>no warranties</strong>, express or implied, regarding accuracy, completeness, performance, or fitness for any particular purpose.
 By using this tool, you acknowledge and agree that: You are solely responsible for evaluating the results and for any actions you take based on them; The developers and contributors are <strong>not liable</strong> for any damages or losses, direct or indirect, arising from the use of this software.
 <br>
+The code realizing the demo does not intentionally collect any personal data.
+However, the demo is hosted on Streamlit Community Cloud, and Streamlit may collect certain types of data as described in their [privacy policy](https://streamlit.io/privacy).
+
 For transparency, this project is open source. You may review the source code at:
 <a href="https://github.com/unlayer-ai/streamlit-diagnostic-demo/" target="_blank">GitHub Repository</a>
 """,
@@ -78,7 +81,7 @@ For transparency, this project is open source. You may review the source code at
         _, col = st.columns([4, 3])
         with col:
             btn_accept_disclaimer = st.button(
-                "I read the disclaimer and wish to proceed"
+                "I read the disclaimer, Streamlit's privacy policy, and wish to proceed"
             )
     
 
