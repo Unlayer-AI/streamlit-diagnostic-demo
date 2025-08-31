@@ -62,14 +62,14 @@ The application includes sample data in the `demo_data/` folder:
 - `model.pkl`: Pre-trained model
 - `train.csv` & `dev.csv`: Training and development sets
 
-## 📋 Usage
+## 📚 Dataset Attribution & License
 
-### Basic Workflow
+This demo uses a prepared subset derived from U.S. Census Bureau public‑use microdata commonly known as the “Adult (Census Income)” dataset.
 
-1. **Upload Data**: Provide a CSV file with your dataset
-2. **Upload Model**: Provide a pickled scikit-learn compatible model
-3. **Select Target Variable**: Choose the column your model predicts
-4. **Run Diagnostics**: Click "Diagnose!" to execute all checks
+- Source: U.S. Census Bureau, public‑use microdata (public domain).
+- License/Use: Works of the U.S. federal government are in the public domain. Commercial use is allowed. Attribution is not legally required; provided here as a courtesy. No endorsement by the U.S. Census Bureau is implied.
+- Courtesy attribution: "Contains data derived from U.S. Census Bureau public‑use microdata (often referenced as the ‘Adult/Census Income’ dataset). Public domain. Modifications by Unlayer AI. No endorsement implied."
+- Links: Census data portal: https://www.census.gov/data.html · Census open data terms: https://www.census.gov/data/developers/about/terms-of-service.html
 
 ## 📞 Contact
 
@@ -77,13 +77,13 @@ Want to learn more about responsible AI or integrate these diagnostics into your
 
 **Unlayer AI** - Building transparent and trustworthy AI systems
 
-- Learn about counterfactual explanations, integrated gradients, causality, and symbolic regression
-- Explore enterprise solutions for responsible AI
+- Learn about responsible AI practices
 - Get expert guidance on AI ethics and compliance
+- Explore tailored solutions for your organization's AI needs
 - Visit [https://unlayer.ai](https://unlayer.ai) for more information
 
 ## 📄 License
 
-This project is licensed under MIT License with Attribution - see the [LICENSE](LICENSE) file for details.
+This project is licensed under MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
