@@ -171,9 +171,17 @@ def run_fairness() -> dict[str, any] | None:
     }
 
     # call llm
-    fair_msg, fair_columns = extract_fairness_columns(
-        st.session_state.df,
-    )
+    try:
+        fair_msg, fair_columns = extract_fairness_columns(
+            st.session_state.df,
+        )
+    except Exception as e:
+        # Gracefully handle LLM failures (e.g., out of credits, network issues)
+        result["error"] = (
+            "Fairness checks could not run because the LLM call failed. "
+            f"Details: {e}"
+        )
+        return result
     if len(fair_columns) == 0:
         return result
 
@@ -240,7 +248,7 @@ def run_fairness() -> dict[str, any] | None:
 
 
 def display_fairness(fairness_col, fairness_tab, fairness_result):
-
+    
     explanation_container = fairness_tab.container(border=True)
     explanation_container.markdown(
         """\
@@ -255,6 +263,18 @@ Fairness is particularly important in sensitive applications, such as hiring, le
 - [Barocas, Hardt, Narayan 2023: Fairness and Machine Learning: Limitations and Opportunities](https://fairmlbook.org/)
 """
     )
+
+    # Surface LLM error explicitly if present
+    if fairness_result is not None and isinstance(fairness_result, dict) and "error" in fairness_result:
+        fairness_col.metric(
+            label="Fairness",
+            value="Error",
+            delta="LLM call failed",
+        )
+        fairness_tab.write(
+            "⚠️ " + str(fairness_result.get("error", "An unknown LLM error occurred."))
+        )
+        return
 
     if fairness_result is None:
         fairness_col.metric(
